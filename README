@@ -1,4 +1,45 @@
-This is an implementation of roundup(1) in Go.
+This is an implementation of a subset of roundup(1) in Go.
 For the original utility (that is considered to be the mainline) go to https://github.com/bmizerany/roundup
 
 A good introduction is here: http://itsbonus.heroku.com/p/2010-11-01-roundup
+
+The main motivation for this particular implementation was speed. Benchmarks:
+
+(original roundup):
+time sh ~/roundup/roundup.sh all-test.sh
+...
+Tests: 1355 | Passed: 1355 | Failed: 0
+
+real 1m8.612s
+user 0m0.110s
+sys 0m0.480s
+
+
+(Go roundup):
+time roundup all-test.sh
+...
+Tests: 1355 | Passed: 1355 | Failed:   0 |
+
+real   0m42.342s
+user   0m0.570s
+sys    0m0.740s
+
+(Go roundup with -j2):
+time roundup -j2 all-test.sh
+...
+Tests: 1355 | Passed: 1355 | Failed:   0 |
+
+real   0m16.752s
+user   0m0.400s
+sys    0m0.530s
+
+(Go roundup with -j8):
+time roundup -j8 all-test.sh
+...
+Tests: 1355 | Passed: 1355 | Failed:   0 |
+
+real   0m6.071s
+user   0m0.520s
+sys    0m0.750s
+
+6 sec vs 68 sec is a big win for me.
