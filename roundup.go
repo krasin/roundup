@@ -14,6 +14,8 @@ import (
 const (
 	jLo = 1
 	jHi = 16
+
+	jEnv = "ROUNDUP_CONCURRENCY"
 )
 
 var testCaseRegexp = regexp.MustCompile("it_[a-zA-Z0-9_]*")
@@ -77,13 +79,22 @@ func summarize(res []*TaskResult) bool {
 }
 
 func main() {
+	var err os.Error
 	if len(os.Args) == 1 {
 		printUsage()
 		os.Exit(1)
 	}
 	var j = jLo
+	if os.Getenv(jEnv) != "" {
+		j, err = strconv.Atoi(os.Getenv(jEnv))
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Warning: %s environment variable is set, "+
+				"but has non-numeric value %s\n",
+				jEnv, os.Getenv(jEnv))
+			j = 1
+		}
+	}
 	if strings.HasPrefix(os.Args[1], "-j") {
-		var err os.Error
 		j, err = strconv.Atoi(os.Args[1][2:])
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "roundup: Couldn't parse -j option. "+
@@ -96,8 +107,8 @@ func main() {
 		}
 	}
 	if j < jLo || j > jHi {
-		fmt.Fprintf(os.Stderr, "roundup: -j%d is invalid option. "+
-			"Concurrency level from %d to %d are supported", j, jLo, jHi)
+		fmt.Fprintf(os.Stderr, "roundup: %d is invalid value for concurrency level. "+
+			"Concurrency levels from %d to %d are only supported\n", j, jLo, jHi)
 		os.Exit(1)
 	}
 	testPlan := os.Args[len(os.Args)-1]
