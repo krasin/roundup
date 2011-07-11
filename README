@@ -1,0 +1,4 @@
+This is an implementation of roundup(1) in Go.
+For the original utility (that is considered to be the mainline) go to https://github.com/bmizerany/roundup
+
+A good introduction is here: http://itsbonus.heroku.com/p/2010-11-01-roundup
